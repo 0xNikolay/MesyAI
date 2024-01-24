@@ -1,0 +1,49 @@
+.customShadow {
+    border-radius: 30px;
+    background: #2d2d2d;
+    box-shadow: inset 1px 1px 5px #434343, inset -1px -1px 5px #171717;
+}
+
+.customSlider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    outline: none;
+    background: transparent;
+}
+
+.customSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    background: white;
+    cursor: pointer;
+}
+
+.customSlider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    background: white;
+    cursor: pointer;
+    opacity: 0;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #181818;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #606060;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
