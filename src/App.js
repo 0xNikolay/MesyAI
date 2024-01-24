@@ -255,7 +255,12 @@ function App() {
                                         var myHeaders = new Headers();
                                         myHeaders.append("Content-Type", "application/json");
                                         let imageSrc = "";
-                                        if (document.getElementById("previewImg").getAttribute("src").includes("/api/v1/image/")) {
+                                        if (
+                                            document
+                                                .getElementById("previewImg")
+                                                .getAttribute("src")
+                                                .includes(process.env.REACT_APP_SERVER + "/api/v1/image/")
+                                        ) {
                                             imageSrc = document.getElementById("previewImg").getAttribute("src").split("/").at(-1);
                                         } else {
                                             imageSrc = document.getElementById("previewImg").getAttribute("src");
@@ -291,13 +296,13 @@ function App() {
                                             redirect: "follow",
                                         };
 
-                                        fetch("/api/v1/nudify", requestOptions)
+                                        fetch(process.env.REACT_APP_SERVER + "/api/v1/nudify", requestOptions)
                                             .then((response) => response.json())
                                             .then((result) => {
                                                 if (Object.keys(result).includes("error")) {
                                                     alert(result.error);
                                                 } else {
-                                                    let imgUrl = "/api/v1/image/" + result.job + ".png";
+                                                    let imgUrl = process.env.REACT_APP_SERVER + "/api/v1/image/" + result.job + ".png";
                                                     document.getElementById("previewImg").setAttribute("src", imgUrl);
                                                 }
                                             })
@@ -429,13 +434,13 @@ function App() {
                                         };
                                         document.getElementById("loader").classList.remove("hidden");
                                         if (document.getElementById("previewImg").getAttribute("src") !== "") document.getElementById("previousImg").setAttribute("src", document.getElementById("previewImg").getAttribute("src"));
-                                        fetch("/api/v1/sdxl/generate", requestOptions)
+                                        fetch(process.env.REACT_APP_SERVER + "/api/v1/sdxl/generate", requestOptions)
                                             .then((response) => response.json())
                                             .then((result) => {
                                                 if (Object.keys(result).includes("error")) {
                                                     alert(result.error);
                                                 } else {
-                                                    let imgUrl = "/api/v1/image/" + result.job + ".png";
+                                                    let imgUrl = process.env.REACT_APP_SERVER + "/api/v1/image/" + result.job + ".png";
                                                     document.getElementById("previewImg").setAttribute("src", imgUrl);
                                                 }
                                             })
