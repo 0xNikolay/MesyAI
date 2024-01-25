@@ -165,7 +165,7 @@ function App() {
                     </Swiper>
                 </div>
                 <div className="h-fit md:h-full w-full flex flex-col md:col-span-2 md:grid md:grid-rows-6 gap-3">
-                    <div className="bg-white/10 w-full h-auto aspect-square md:aspect-auto  row-span-5 rounded-xl customShadow overflow-hidden relative">
+                    <div className="bg-white/10 w-full h-[calc(100vw+3rem)] md:h-full md:aspect-auto  row-span-5 rounded-xl customShadow overflow-hidden relative">
                         <img
                             id="previewImg"
                             onError={() => {
@@ -182,19 +182,22 @@ function App() {
                                 setWorking(false);
                             }}
                             src=""
-                            className="absolute left-0 top-0 opacity-0 w-full h-full object-contain z-10"
+                            className="absolute left-0 bottom-0 md:top-0 opacity-0  w-full h-full object-contain z-10"
                         />
                         <img
                             id="previousImg"
                             onError={() => {
+                                if (document.getElementById("previousImg").getAttribute("src") === "") {
+                                    document.getElementById("previousImg").src = "/images/demo" + (Math.floor(Math.random() * 10) + 1) + ".jpg";
+                                }
                                 document.getElementById("previousImg").classList.add("opacity-0");
                                 setTimeout(() => {
                                     document.getElementById("previousImg").setAttribute("src", document.getElementById("previousImg").src);
                                     document.getElementById("previousImg").classList.remove("opacity-0");
                                 }, 2000);
                             }}
-                            src={"/images/demo" + (Math.floor(Math.random() * 10) + 1) + ".jpg"}
-                            className="absolute left-0 top-0 h-full w-full object-contain z-0"
+                            src=""
+                            className="absolute left-0 bottom-0 md:top-0  h-full w-full object-contain z-0"
                         />
                         <img src="/logo512.png" className="absolute right-3 bottom-3 h-10 w-10 drop-shadow-2xl z-20" />
                         <div className="absolute top-3 right-3 flex items-center justify-center gap-3">
