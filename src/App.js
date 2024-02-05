@@ -12,6 +12,7 @@ import { baseAtom, boobsAtom, assAtom, bodyTypeAtom, expressionAtom, ageAtom, ha
 function App() {
     const [swiper, setSwiper] = useState();
     const [swiper2, setSwiper2] = useState();
+    const [images, setImages] = useState([]);
     const [attributes, setAttributes] = useAtom(attributesAtom);
     const [base, setbase] = useAtom(baseValueAtom);
     const [boobs, setboobs] = useAtom(boobsValueAtom);
@@ -180,6 +181,9 @@ function App() {
                             onLoad={() => {
                                 document.getElementById("loader").classList.add("hidden");
                                 setWorking(false);
+                                if (document.getElementById("previewImg").getAttribute("src") !== "" && !images.includes(document.getElementById("previewImg").getAttribute("src"))) {
+                                    setImages([...images, document.getElementById("previewImg").getAttribute("src")]);
+                                }
                             }}
                             src=""
                             className="absolute left-0 bottom-0 md:top-0 opacity-0  w-full h-full object-contain z-10"
@@ -188,7 +192,7 @@ function App() {
                             id="previousImg"
                             onError={() => {
                                 if (document.getElementById("previousImg").getAttribute("src") === "") {
-                                    document.getElementById("previousImg").src = "/images/demo" + (Math.floor(Math.random() * 10) + 1) + ".jpg";
+                                    document.getElementById("previousImg").src = "/static/images/demo" + (Math.floor(Math.random() * 10) + 1) + ".jpg";
                                 }
                                 document.getElementById("previousImg").classList.add("opacity-0");
                                 setTimeout(() => {
@@ -199,7 +203,37 @@ function App() {
                             src=""
                             className="absolute left-0 bottom-0 md:top-0  h-full w-full object-contain z-0"
                         />
-                        <img src="/logo512.png" className="absolute right-3 bottom-3 h-10 w-10 drop-shadow-2xl z-20" />
+                        <img src="/static/logo512.png" className="absolute right-3 bottom-3 h-10 w-10 drop-shadow-2xl z-20" />
+                        <div className="absolute top-3 left-3 gap-3 flex items-center justify-center">
+                            <svg
+                                className="h-10 w-10 drop-shadow-2xl z-20 bg-white rounded-full p-3 hover:scale-105 overflow-visible cursor-pointer"
+                                onClick={() => {
+                                    let currentImage = document.getElementById("previewImg").getAttribute("src");
+                                    let index = images.indexOf(currentImage);
+                                    if (index > 0) {
+                                        document.getElementById("previewImg").setAttribute("src", images[index - 1]);
+                                    }
+                                }}
+                                viewBox="0 0 1024 1024"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="m222.927 580.115 301.354 328.512c24.354 28.708 20.825 71.724-7.883 96.078s-71.724 20.825-96.078-7.883L19.576 559.963a67.846 67.846 0 0 1-13.784-20.022 68.03 68.03 0 0 1-5.977-29.488l.001-.063a68.343 68.343 0 0 1 7.265-29.134 68.28 68.28 0 0 1 1.384-2.6 67.59 67.59 0 0 1 10.102-13.687L429.966 21.113c25.592-27.611 68.721-29.247 96.331-3.656s29.247 68.721 3.656 96.331L224.088 443.784h730.46c37.647 0 68.166 30.519 68.166 68.166s-30.519 68.166-68.166 68.166H222.927z" />
+                            </svg>
+                            <svg
+                                className="h-10 w-10 rotate-180 drop-shadow-2xl z-20 bg-white rounded-full p-3 hover:scale-105 overflow-visible cursor-pointer"
+                                onClick={() => {
+                                    let currentImage = document.getElementById("previewImg").getAttribute("src");
+                                    let index = images.indexOf(currentImage);
+                                    if (index < images.length - 1) {
+                                        document.getElementById("previewImg").setAttribute("src", images[index + 1]);
+                                    }
+                                }}
+                                viewBox="0 0 1024 1024"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="m222.927 580.115 301.354 328.512c24.354 28.708 20.825 71.724-7.883 96.078s-71.724 20.825-96.078-7.883L19.576 559.963a67.846 67.846 0 0 1-13.784-20.022 68.03 68.03 0 0 1-5.977-29.488l.001-.063a68.343 68.343 0 0 1 7.265-29.134 68.28 68.28 0 0 1 1.384-2.6 67.59 67.59 0 0 1 10.102-13.687L429.966 21.113c25.592-27.611 68.721-29.247 96.331-3.656s29.247 68.721 3.656 96.331L224.088 443.784h730.46c37.647 0 68.166 30.519 68.166 68.166s-30.519 68.166-68.166 68.166H222.927z" />
+                            </svg>
+                        </div>
                         <div className="absolute top-3 right-3 flex items-center justify-center gap-3">
                             <div className="relative group cursor-pointer z-20">
                                 <svg title="Upload" className="h-10 w-10 drop-shadow-2xl z-30 bg-white rounded-full p-2 group-hover:scale-105 overflow-visible" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -240,6 +274,7 @@ function App() {
                                                 .catch((error) => console.log("error", error))
                                                 .finally(() => {
                                                     document.getElementById("loader").classList.add("hidden");
+                                                    document.getElementById("uploadFile").value = "";
                                                 });
                                         };
                                         reader.readAsDataURL(file);
@@ -248,6 +283,97 @@ function App() {
                                     className="absolute left-0 top-0 opacity-0 w-full h-full object-contain z-10"
                                 />
                             </div>
+                            <svg
+                                title="Cloth Changer"
+                                onClick={() => {
+                                    if (!working) {
+                                        setWorking(true);
+                                        document.getElementById("loader").classList.remove("hidden");
+                                        if (document.getElementById("previewImg").getAttribute("src") !== "") document.getElementById("previousImg").setAttribute("src", document.getElementById("previewImg").getAttribute("src"));
+                                        var myHeaders = new Headers();
+                                        myHeaders.append("Content-Type", "application/json");
+                                        let imageSrc = "";
+                                        if (
+                                            document
+                                                .getElementById("previewImg")
+                                                .getAttribute("src")
+                                                .includes(process.env.REACT_APP_SERVER + "/api/v1/image/")
+                                        ) {
+                                            imageSrc = document.getElementById("previewImg").getAttribute("src").split("/").at(-1);
+                                        } else {
+                                            imageSrc = document.getElementById("previewImg").getAttribute("src");
+                                        }
+                                        var raw = JSON.stringify({
+                                            image: imageSrc,
+                                            cameraAngle: cameraAngle,
+                                            age: age,
+                                            base: base,
+                                            expression: expression,
+                                            bodyType: bodyType,
+                                            style: style,
+                                            action: action,
+                                            boobs: boobs,
+                                            ass: ass,
+                                            clothing: clothing,
+                                            hairStyle: hairStyle,
+                                            quality: quality,
+                                            clothingColor: clothingColor,
+                                            clothingType: clothingType,
+                                            clothingMaterial: clothingMaterial,
+                                            clothingPattern: clothingPattern,
+                                            lighting: lighting,
+                                            setting: setting,
+                                            background: background,
+                                            seed: seed,
+                                        });
+
+                                        var requestOptions = {
+                                            method: "POST",
+                                            headers: myHeaders,
+                                            body: raw,
+                                            redirect: "follow",
+                                        };
+
+                                        fetch(process.env.REACT_APP_SERVER + "/api/v1/clotheChanger", requestOptions)
+                                            .then((response) => response.json())
+                                            .then((result) => {
+                                                if (Object.keys(result).includes("error")) {
+                                                    alert(result.error);
+                                                } else {
+                                                    let imgUrl = process.env.REACT_APP_SERVER + "/api/v1/image/" + result.job + ".png";
+                                                    document.getElementById("previewImg").setAttribute("src", imgUrl);
+                                                }
+                                            })
+                                            .catch((error) => console.log("error", error));
+                                    }
+                                }}
+                                className="h-10 w-10 drop-shadow-2xl z-20 bg-white rounded-full p-2 hover:scale-105 overflow-visible cursor-pointer"
+                                viewBox="0 0 64 64"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M1.7 24.1.6 11.3s8.7-3.6 11.7-4.1c4.8-.8 14-2 19.7-2s14.8 1.2 19.7 2c3.1.5 11.7 4.1 11.7 4.1l-1.1 12.8-12.1.9c-.2 13.7 1.9 30.5 2.6 36.1 0 0-8.9.4-20.8.5-11.9-.1-20.8-.5-20.8-.5.7-5.6 2.8-22.4 2.6-36.1l-12.1-.9" fill="#fb5e4e" />
+                                <g fill="#fd753b">
+                                    <path d="M32 12.4h1.2v49.2H32z" />
+                                    <path d="M26.3 5.6h11.5v7H26.3z" />
+                                </g>
+                                <path fill="#fb5e4e" d="M21.8 0h20.4v6.6H21.8z" />
+                                <g fill="#e44400">
+                                    <path d="m42.2 0 3.9 6.2-7.4 11.5-6.7-5.1z" />
+                                    <path d="m21.8 0-3.9 6.2 7.4 11.5 6.7-5.1z" />
+                                </g>
+                                <circle cx={28.9} cy={20.4} fill="#fd753b" r={2.6} />
+                                <ellipse cx={28.9} cy={20.1} rx={2.5} ry={2.3} fill="#ffffff" />
+                                <circle cx={28.9} cy={28.9} fill="#fd753b" r={2.6} />
+                                <ellipse cx={28.9} cy={28.6} rx={2.5} ry={2.3} fill="#ffffff" />
+                                <circle cx={28.9} cy={37.4} fill="#fd753b" r={2.6} />
+                                <ellipse cx={28.9} cy={37.1} rx={2.5} ry={2.3} fill="#ffffff" />
+                                <circle cx={28.9} cy={45.9} fill="#fd753b" r={2.6} />
+                                <ellipse cx={28.9} cy={45.6} rx={2.5} ry={2.3} fill="#ffffff" />
+                                <circle cx={28.9} cy={54.4} fill="#fd753b" r={2.6} />
+                                <ellipse cx={28.9} cy={54.1} rx={2.5} ry={2.3} fill="#ffffff" />
+                                <path d="M64 11.1 60.7 10l-1.2 14.6 3.5-.3zm-64 0L3.3 10l1.2 14.6-3.5-.3zm32 48c10.7-.2 19.2-1.6 20.6-2.5.1 1.9.1 3.5.2 4.8 0 0-8.9 2.5-20.8 2.7-11.9-.2-20.8-2.7-20.8-2.7.1-1.2.2-2.9.2-4.8 1.4.8 9.9 2.3 20.6 2.5" fill="#e44400" />
+                                <path fill="#fb5e4e" d="M32 59.1h1.2V64H32z" />
+                            </svg>
                             <svg
                                 title="nudify"
                                 onClick={() => {
@@ -401,7 +527,7 @@ function App() {
                             <svg
                                 title="reimagine"
                                 onClick={() => {
-                                    setSeed(seed + 1);
+                                    // setSeed(seed + 1);
                                     if (!working) {
                                         setWorking(true);
 
