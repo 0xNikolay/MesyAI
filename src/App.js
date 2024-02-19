@@ -109,6 +109,41 @@ function App() {
         }
     }
 
+    function fileUpload(file) {
+        let reader = new FileReader();
+        reader.onloadend = function () {
+            document.getElementById("loader").classList.remove("hidden");
+            var formdata = new FormData();
+            let imgsrc = reader.result.split("base64,")[1];
+            formdata.append("image", imgsrc);
+
+            var requestOptions = {
+                method: "POST",
+                body: formdata,
+                redirect: "follow",
+            };
+
+            fetch("https://api.imgbb.com/1/upload?expiration=600&key=8560d0a3da0674cd1bca85f36f734d81", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.success === true) {
+                        document.getElementById("previewImg").src = result.data.url;
+                        if (document.getElementById("previewImg").classList.contains("opacity-0")) {
+                            document.getElementById("previewImg").classList.remove("opacity-0");
+                        }
+                    } else {
+                        alert("Error uploading image");
+                    }
+                })
+                .catch((error) => console.log("error", error))
+                .finally(() => {
+                    document.getElementById("loader").classList.add("hidden");
+                    document.getElementById("uploadFile").value = "";
+                });
+        };
+        reader.readAsDataURL(file);
+    }
+
     return (
         <div className="bg-primary-950 w-full min-h-screen h-full py-5 md:py-10 flex items-center justify-center">
             <div className="w-[95%] md:w-[90%] h-[90%] grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -166,7 +201,17 @@ function App() {
                     </Swiper>
                 </div>
                 <div className="h-fit md:h-full w-full flex flex-col md:col-span-2 md:grid md:grid-rows-6 gap-3">
-                    <div className="bg-white/10 w-full h-[calc(100vw+3rem)] md:h-full md:aspect-auto  row-span-5 rounded-xl customShadow overflow-hidden relative">
+                    <div
+                        onDrop={(event) => {
+                            event.preventDefault();
+                            console.log("Drop");
+                            fileUpload(event.dataTransfer.files[0]);
+                        }}
+                        onDragOver={(event) => {
+                            event.preventDefault();
+                        }}
+                        className="bg-white/10 w-full h-[calc(100vw+3rem)] md:h-full md:aspect-auto  row-span-5 rounded-xl customShadow overflow-hidden relative"
+                    >
                         <img
                             id="previewImg"
                             onError={() => {
@@ -235,8 +280,8 @@ function App() {
                             </svg>
                         </div>
                         <div className="absolute top-3 right-3 flex items-center justify-center gap-3">
-                            <div className="relative group cursor-pointer z-20">
-                                <svg title="Upload" className="h-10 w-10 drop-shadow-2xl z-30 bg-white rounded-full p-2 group-hover:scale-105 overflow-visible" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <div className="relative group cursor-pointer z-20  overflow-visible">
+                                <svg title="Upload" className="h-10 w-10 drop-shadow-2xl z-0 bg-white rounded-full p-2 group-hover:scale-105 overflow-visible" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                                     <path fill="#ff763b" d="M0 100V0h72l28 28v72H0z" />
                                     <path fill="#e64500" d="M0 100V72L72 0l28 28-72 72H0z" />
                                     <path fill="#ff763b" d="M72 0h1l27 27v1H72V0z" />
@@ -244,43 +289,13 @@ function App() {
                                 </svg>
                                 <input
                                     type="file"
-                                    onChange={(event) => {
+                                    onChangeCapture={(event) => {
+                                        event.preventDefault();
                                         let file = event.currentTarget.files[0];
-                                        let reader = new FileReader();
-                                        reader.onloadend = function () {
-                                            document.getElementById("loader").classList.remove("hidden");
-                                            var formdata = new FormData();
-                                            let imgsrc = reader.result.split("base64,")[1];
-                                            formdata.append("image", imgsrc);
-
-                                            var requestOptions = {
-                                                method: "POST",
-                                                body: formdata,
-                                                redirect: "follow",
-                                            };
-
-                                            fetch("https://api.imgbb.com/1/upload?expiration=600&key=8560d0a3da0674cd1bca85f36f734d81", requestOptions)
-                                                .then((response) => response.json())
-                                                .then((result) => {
-                                                    if (result.success === true) {
-                                                        document.getElementById("previewImg").src = result.data.url;
-                                                        if (document.getElementById("previewImg").classList.contains("opacity-0")) {
-                                                            document.getElementById("previewImg").classList.remove("opacity-0");
-                                                        }
-                                                    } else {
-                                                        alert("Error uploading image");
-                                                    }
-                                                })
-                                                .catch((error) => console.log("error", error))
-                                                .finally(() => {
-                                                    document.getElementById("loader").classList.add("hidden");
-                                                    document.getElementById("uploadFile").value = "";
-                                                });
-                                        };
-                                        reader.readAsDataURL(file);
+                                        fileUpload(file);
                                     }}
                                     id="uploadFile"
-                                    className="absolute left-0 top-0 opacity-0 w-full h-full object-contain z-10"
+                                    className="absolute left-0 top-0 opacity-0 h-full object-contain z-50"
                                 />
                             </div>
                             <svg
